@@ -426,6 +426,7 @@ end
 
 function prompt_hg -d "Show mercurial working tree info"
   test "$BULLETTRAIN_HG_SHOW" = "true"; or return
+  test (command -v hg); or return
 
   set -l _hg_id (hg id -nb ^ /dev/null)
   test "$_hg_id"; or return
