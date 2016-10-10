@@ -308,7 +308,8 @@ function prompt_nodejs -d "Show node.js environment"
   set -l _nodejs_prompt
   test (command -v nvm);
     and set _nodejs_prompt (nvm current ^ /dev/null);
-    or  set _nodejs_prompt (node --version ^ /dev/null | tail -n1)
+    or  test (command -v node);
+      and set _nodejs_prompt (node --version ^ /dev/null | tail -n1)
 
   test "$_nodejs_prompt";
     and set _nodejs_prompt $BULLETTRAIN_NODEJS_PREFIX $_nodejs_prompt;
