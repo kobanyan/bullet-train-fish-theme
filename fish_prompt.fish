@@ -329,6 +329,7 @@ end
 
 function prompt_git -d "Show git working tree info"
   test "$BULLETTRAIN_GIT_SHOW" = "true"; or return
+  test (command -v git); or return
   test (git rev-parse --is-inside-work-tree ^ /dev/null); or return
 
   set -l _bg $BULLETTRAIN_GIT_BG
