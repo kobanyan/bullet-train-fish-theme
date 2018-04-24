@@ -301,7 +301,7 @@ function prompt_python -d "Show python environment"
   if test "$VIRTUAL_ENV" -a "$VIRTUAL_ENV_DISABLE_PROMPT" = "true"
     set _python_prompt (basename $VIRTUAL_ENV)
   else if test (command -v pyenv)
-    set _python_prompt (pyenv version | sed -e 's/ (set.*$//' | tr '\n' ' ' | sed 's/.$//')
+    set _python_prompt (pyenv version-name | sed -e 's/:.*$//' )
   end
 
   switch "$_python_prompt"
