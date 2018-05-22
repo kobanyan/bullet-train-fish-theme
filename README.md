@@ -1,7 +1,7 @@
 # Bullet Train for fish
 
-Bullet Train **for fish** is reimplementaion of 
-[Bullet Train for oh-my-zsh](https://github.com/caiogondim/bullet-train-oh-my-zsh-theme) 
+Bullet Train **for fish** is reimplementaion of
+[Bullet Train for oh-my-zsh](https://github.com/caiogondim/bullet-train-oh-my-zsh-theme)
 as [fish shell](https://github.com/fish-shell/fish-shell)
 theme.
 
@@ -143,6 +143,7 @@ NOTE: You do not need to specify *end* segment - it will be added automatically.
 |`BULLETTRAIN_RUBY_BG`|`magenta`|Background color
 |`BULLETTRAIN_RUBY_FG`|`white`|Foreground color
 |`BULLETTRAIN_RUBY_PREFIX`|`"💎 "`|Prefix of the segment
+|`BULLETTRAIN_RUBY_SHOW_SYSTEM`|`true`|Show/hide `system` version
 
 ### Python virtualenv/pyenv (Segment Name: `python`)
 
@@ -152,6 +153,7 @@ NOTE: You do not need to specify *end* segment - it will be added automatically.
 |`BULLETTRAIN_PYTHON_BG`|`yellow`|Background color
 |`BULLETTRAIN_PYTHON_FG`|`white`|Foreground color
 |`BULLETTRAIN_PYTHON_PREFIX`|`"🐍 "`|Prefix of the segment
+|`BULLETTRAIN_PYTHON_SHOW_SYSTEM`|`true`|Show/hide `system` version
 
 Set `true` as default `VIRTUAL_ENV_DISABLE_PROMPT` value.
 
