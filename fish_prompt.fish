@@ -282,6 +282,8 @@ function prompt_ruby -d "Show ruby environment"
     set _ruby_prompt (rvm-prompt i v g)
   else if test (command -v chruby)
     set _ruby_prompt (chruby | sed -n -e 's/ \* //p')
+  else if test (command -v asdf)
+    set _ruby_prompt (asdf current ruby | sed -e 's/\s*(set.*$//')
   end
 
   switch "$_ruby_prompt"
@@ -302,6 +304,8 @@ function prompt_python -d "Show python environment"
     set _python_prompt (basename $VIRTUAL_ENV)
   else if test (command -v pyenv)
     set _python_prompt (pyenv version-name | sed -e 's/:.*$//' )
+  else if test (command -v asdf)
+    set _python_prompt (asdf current python | sed -e 's/\s*(set.*$//')
   end
 
   switch "$_python_prompt"
@@ -318,10 +322,13 @@ function prompt_nodejs -d "Show node.js environment"
   test "$BULLETTRAIN_NODEJS_SHOW" = "true"; or return
 
   set -l _nodejs_prompt
-  test (command -v nvm);
-    and set _nodejs_prompt (nvm current ^ /dev/null);
-    or  test (command -v node);
-      and set _nodejs_prompt (node --version ^ /dev/null | tail -n1)
+  if test (command -v nvm)
+    set _nodejs_prompt (nvm current ^ /dev/null);
+  else if test (command -v asdf)
+    set _nodejs_prompt (asdf current nodejs | sed -e 's/\s*(set.*$//')
+  else if test (command -v node)
+    set _nodejs_prompt (node --version ^ /dev/null | tail -n1)
+  end
 
   test "$_nodejs_prompt";
     and set _nodejs_prompt $BULLETTRAIN_NODEJS_PREFIX $_nodejs_prompt;

@@ -6,9 +6,9 @@ as [fish shell](https://github.com/fish-shell/fish-shell)
 theme.
 
 It currently shows:
-- Current Python virtualenv; when using Pyenv and no active virtualenv shows the current Python version the shell uses
-- Current Ruby version using chruby; version and gemset when on RVM or Rbenv
-- Current Node.js version, through NVM (if present) or Node.js
+- Current Python virtualenv; when using Pyenv and no active virtualenv shows the current Python version the shell uses; version using asdf
+- Current Ruby version using chruby or asdf; version and gemset when on RVM or Rbenv
+- Current Node.js version, through NVM (if present) or asdf or Node.js
 - Current Perl version using plenv
 - Git status
 - Timestamp
