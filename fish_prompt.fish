@@ -339,8 +339,11 @@ function prompt_go -d "Show go environment"
   test "$BULLETTRAIN_GO_SHOW" = "true"; or return
 
   set -l _go_prompt
-  test (command -v go);
-    and set _go_prompt (go version | grep --colour=never -oE '[[:digit:]].[[:digit:]]')
+  if test (command -v asdf)
+    set _go_prompt (asdf current golang | sed -e 's/\s*(set.*$//')
+  else if test (command -v go)
+    and set _go_prompt (go version | grep --colour=never -oE '[[:digit:]].[[:digit:]]+')
+  end
 
   test "$_go_prompt";
     and set _go_prompt $BULLETTRAIN_GO_PREFIX $_go_prompt;
