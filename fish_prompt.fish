@@ -3,7 +3,7 @@ function fish_prompt
   set -g segment_separator ""
   set -g current_bg normal
   setup_parameters
-  test $BULLETTRAIN_PROMPT_ADD_NEWLINE; and echo ""
+  test "$BULLETTRAIN_PROMPT_ADD_NEWLINE" = "true"; and echo ""; or echo -n ""
   for segment in $BULLETTRAIN_PROMPT_ORDER
     eval "prompt_$segment"
   end
@@ -191,7 +191,7 @@ function prompt_char
   test (whoami) = "root"; and set _fg green
 
   set_color $_fg
-  echo -n "$BULLETTRAIN_PROMPT_CHAR "
+  echo -n "$BULLETTRAIN_PROMPT_CHAR"
 end
 
 function prompt_time -d "Show current time"
