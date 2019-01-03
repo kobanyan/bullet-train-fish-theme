@@ -408,11 +408,11 @@ end
 
 function git_prompt_status -a bg fg
   git status --porcelain -b ^ /dev/null | read -lz _index
-  test (find_from_lines '^## [^ ]\+ .*diverged' $_index);
+  test (find_from_lines 'diverged' $_index);
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_DIVERGED_FG $BULLETTRAIN_GIT_DIVERGED
-  test (find_from_lines '^## [^ ]\+ .*behind' $_index);
+  test (find_from_lines 'behind' $_index);
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_BEHIND_FG $BULLETTRAIN_GIT_BEHIND
-  test (find_from_lines '^## [^ ]\+ .*ahead' $_index);
+  test (find_from_lines 'ahead' $_index);
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_AHEAD_FG $BULLETTRAIN_GIT_AHEAD
   test (find_from_lines '^UU ' $_index);
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_UNMERGED_FG $BULLETTRAIN_GIT_UNMERGED
