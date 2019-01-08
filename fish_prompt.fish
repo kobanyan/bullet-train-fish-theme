@@ -5,10 +5,10 @@ function fish_prompt
   setup_parameters
   test "$BULLETTRAIN_PROMPT_ADD_NEWLINE" = "true"; and echo ""; or echo -n ""
   for segment in $BULLETTRAIN_PROMPT_ORDER
-    eval "prompt_$segment"
+    eval "__bt_prompt_$segment"
   end
-  prompt_end
-  prompt_char
+  __bt_prompt_end
+  __bt_prompt_char
   reset_color
 end
 
@@ -72,6 +72,7 @@ function setup_parameters -d "Set default value if parameter is not declared"
   set -q BULLETTRAIN_NODEJS_BG; or set -g BULLETTRAIN_NODEJS_BG green
   set -q BULLETTRAIN_NODEJS_FG; or set -g BULLETTRAIN_NODEJS_FG white
   set -q BULLETTRAIN_NODEJS_PREFIX; or set -g BULLETTRAIN_NODEJS_PREFIX ⬢
+  set -q BULLETTRAIN_NODEJS_DEFAULT; or set -g BULLETTRAIN_NODEJS_DEFAULT 0
   # go
   set -q BULLETTRAIN_GO_SHOW; or set -g BULLETTRAIN_GO_SHOW
   set -q BULLETTRAIN_GO_BG; or set -g BULLETTRAIN_GO_BG cyan
@@ -146,7 +147,7 @@ function setup_parameters -d "Set default value if parameter is not declared"
   test "$BULLETTRAIN_PROMPT_ORDER"; or set -g BULLETTRAIN_PROMPT_ORDER $_prompt_order
 end
 
-function prompt_segment -a bg fg prompt
+function __bt_prompt_segment -a bg fg prompt
   set -l _bg
   set -l _fg
   set -l _separates
@@ -155,13 +156,13 @@ function prompt_segment -a bg fg prompt
   test "$current_bg" != "normal";
     and test "$bg" != "$current_bg";
       and set _separates true
-  prompt_separator $_bg $_fg $_separates
+  __bt_prompt_separator $_bg $_fg $_separates
   echo -n " "
   set current_bg $bg
   test $prompt; and echo -n "$prompt"
 end
 
-function prompt_separator -a bg fg separates
+function __bt_prompt_separator -a bg fg separates
   if test $separates
     echo -n " "
     set_color -b $bg
@@ -173,8 +174,8 @@ function prompt_separator -a bg fg separates
   set_color $fg
 end
 
-function prompt_end
-  prompt_separator normal normal $current_bg
+function __bt_prompt_end
+  __bt_prompt_separator normal normal $current_bg
   set -e current_bg
 end
 
@@ -182,7 +183,7 @@ function reset_color
   set_color normal
 end
 
-function prompt_char
+function __bt_prompt_char
   test "$BULLETTRAIN_PROMPT_SEPARATE_LINE" = "true";
     and echo "";
     or  echo -n " "
@@ -194,7 +195,7 @@ function prompt_char
   echo -n "$BULLETTRAIN_PROMPT_CHAR"
 end
 
-function prompt_time -d "Show current time"
+function __bt_prompt_time -d "Show current time"
   test "$BULLETTRAIN_TIME_SHOW" = "true"; or return
 
   test "$BULLETTRAIN_TIME_12HR" = "true";
@@ -202,7 +203,7 @@ function prompt_time -d "Show current time"
     or  prompt_segment $BULLETTRAIN_TIME_BG $BULLETTRAIN_TIME_FG (date "+%T")
 end
 
-function prompt_status -d "Show last command status"
+function __bt_prompt_status -d "Show last command status"
   test "$BULLETTRAIN_STATUS_SHOW" = "true"; or return
 
   set -l _bg
@@ -221,7 +222,7 @@ function prompt_status -d "Show last command status"
   test "$_symbols"; and prompt_segment $_bg $_fg "$_symbols"
 end
 
-function prompt_custom -d "Show custome message"
+function __bt_prompt_custom -d "Show custome message"
   test "$BULLETTRAIN_CUSTOM_MSG"; or return
 
   prompt_segment $BULLETTRAIN_CUSTOM_BG $BULLETTRAIN_CUSTOM_FG $BULLETTRAIN_CUSTOM_MSG
@@ -232,7 +233,7 @@ function context
     and echo -n "$USER@$BULLETTRAIN_CONTEXT_HOSTNAME"
 end
 
-function prompt_context -d "Show context"
+function __bt_prompt_context -d "Show context"
   test "$BULLETTRAIN_CONTEXT_SHOW" = "true"; or return
 
   set -l _context (context)
@@ -240,7 +241,7 @@ function prompt_context -d "Show context"
     and prompt_segment $BULLETTRAIN_CONTEXT_BG $BULLETTRAIN_CONTEXT_FG $_context
 end
 
-function prompt_dir -d "Show current directory"
+function __bt_prompt_dir -d "Show current directory"
   test "$BULLETTRAIN_DIR_SHOW" = "true"; or return
 
   set -l _dir
@@ -260,7 +261,7 @@ function prompt_dir -d "Show current directory"
   prompt_segment $BULLETTRAIN_DIR_BG $BULLETTRAIN_DIR_FG "$_dir"
 end
 
-function prompt_perl -d "Show perl environment"
+function __bt_prompt_perl -d "Show perl environment"
   test "$BULLETTRAIN_PERL_SHOW" = "true"; or return
 
   test (command -v plenv);
@@ -268,7 +269,7 @@ function prompt_perl -d "Show perl environment"
       and prompt_segment $BULLETTRAIN_PERL_BG $BULLETTRAIN_PERL_FG "$_version"
 end
 
-function prompt_ruby -d "Show ruby environment"
+function __bt_prompt_ruby -d "Show ruby environment"
   test "$BULLETTRAIN_RUBY_SHOW" = "true"; or return
 
   set -l _ruby_prompt
@@ -296,7 +297,7 @@ function prompt_ruby -d "Show ruby environment"
       and prompt_segment $BULLETTRAIN_RUBY_BG $BULLETTRAIN_RUBY_FG "$_ruby_prompt"
 end
 
-function prompt_python -d "Show python environment"
+function __bt_prompt_python -d "Show python environment"
   test "$BULLETTRAIN_PYTHON_SHOW" = "true"; or return
 
   set -l _python_prompt
@@ -318,24 +319,7 @@ function prompt_python -d "Show python environment"
       and prompt_segment $BULLETTRAIN_PYTHON_BG $BULLETTRAIN_PYTHON_FG "$_python_prompt"
 end
 
-function prompt_nodejs -d "Show node.js environment"
-  test "$BULLETTRAIN_NODEJS_SHOW" = "true"; or return
-
-  set -l _nodejs_prompt
-  if test (command -v nvm)
-    set _nodejs_prompt (nvm current ^ /dev/null);
-  else if test (command -v asdf)
-    set _nodejs_prompt (asdf current nodejs | sed -e 's/\s*(set.*$//')
-  else if test (command -v node)
-    set _nodejs_prompt (node --version ^ /dev/null | tail -n1)
-  end
-
-  test "$_nodejs_prompt";
-    and set _nodejs_prompt $BULLETTRAIN_NODEJS_PREFIX $_nodejs_prompt;
-      and prompt_segment $BULLETTRAIN_NODEJS_BG $BULLETTRAIN_NODEJS_FG "$_nodejs_prompt"
-end
-
-function prompt_go -d "Show go environment"
+function __bt_prompt_go -d "Show go environment"
   test "$BULLETTRAIN_GO_SHOW" = "true"; or return
 
   set -l _go_prompt
@@ -350,7 +334,7 @@ function prompt_go -d "Show go environment"
       and prompt_segment $BULLETTRAIN_GO_BG $BULLETTRAIN_GO_FG "$_go_prompt"
 end
 
-function prompt_git -d "Show git working tree info"
+function __bt_prompt_git -d "Show git working tree info"
   test "$BULLETTRAIN_GIT_SHOW" = "true"; or return
   test (command -v git); or return
   test (git rev-parse --is-inside-work-tree ^ /dev/null); or return
@@ -449,7 +433,7 @@ function git_prompt_segment -a bg base_fg fg prompt
   prompt_segment $bg $_fg $prompt
 end
 
-function prompt_hg -d "Show mercurial working tree info"
+function __bt_prompt_hg -d "Show mercurial working tree info"
   test "$BULLETTRAIN_HG_SHOW" = "true"; or return
   test (command -v hg); or return
 
@@ -491,7 +475,7 @@ function displaytime -a t
   printf '%ds' $_s
 end
 
-function prompt_cmd_exec_time -d "Show last command exection time"
+function __bt_prompt_cmd_exec_time -d "Show last command exection time"
   test "$BULLETTRAIN_EXEC_TIME_SHOW" = "true"; or return
 
   set -l duration
