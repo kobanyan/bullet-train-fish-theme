@@ -4,6 +4,9 @@ function fish_prompt
   set -g current_bg normal
   setup_parameters
   test $BULLETTRAIN_PROMPT_ADD_NEWLINE; and echo ""
+  if test "$BULLETTRAIN_PROMPT_SEPARATE_LINE" != "true"
+    type -q iterm2_prompt_mark; and iterm2_prompt_mark
+  end
   for segment in $BULLETTRAIN_PROMPT_ORDER
     eval "prompt_$segment"
   end
@@ -183,9 +186,12 @@ function reset_color
 end
 
 function prompt_char
-  test "$BULLETTRAIN_PROMPT_SEPARATE_LINE" = "true";
-    and echo "";
-    or  echo -n " "
+  if test "$BULLETTRAIN_PROMPT_SEPARATE_LINE" = "true"
+    echo ""
+    type -q iterm2_prompt_mark; and iterm2_prompt_mark
+  else
+    echo -n " "
+  end
 
   set -l _fg normal
   test (whoami) = "root"; and set _fg green
