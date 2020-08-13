@@ -229,6 +229,18 @@ Set `true` as default `VIRTUAL_ENV_DISABLE_PROMPT` value.
 |`BULLETTRAIN_HG_NOT_ADDED_FG`|`green`|Foreground color for `BULLETTRAIN_HG_DIRTY` when added files exist
 |`BULLETTRAIN_HG_MODIFIED_FG`|`blue`|Foreground color for `BULLETTRAIN_HG_DIRTY` when modified files exist
 
+### Kubernetes Context (Segment Name: `kctx`)
+
+|Variable|Default|Meaning
+|--------|-------|-------|
+|`BULLETTRAIN_KCTX_SHOW`|`true`|Show/hide that segment
+|`BULLETTRAIN_KCTX_BG`|`yellow`|Background color
+|`BULLETTRAIN_KCTX_FG`|`white`|Foreground color
+|`BULLETTRAIN_KCTX_PREFIX`|`⎈`|Prefix
+|`BULLETTRAIN_KCTX_KUBECTL`|`true`|Enable/disable kubectl usage
+|`BULLETTRAIN_KCTX_KCONFIG`|`$HOME/.kube/config`|Location of kube config file (e.g. /Users/Hugo/.kube/config)
+|`BULLETTRAIN_KCTX_NAMESPACE`|`true`|Show/hide the default namespace. Namespace is only visible if kubectl is installed
+
 ### Command execution time (Segment Name: `cmd_exec_time`)
 
 |Variable|Default|Meaning
