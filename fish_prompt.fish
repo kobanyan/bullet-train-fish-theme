@@ -298,7 +298,7 @@ function prompt_ruby -d "Show ruby environment"
   else if test (command -v chruby)
     set _ruby_prompt (chruby | sed -n -e 's/ \* //p')
   else if test (command -v asdf)
-    set _ruby_prompt (asdf current ruby | sed 's/[[:space:]]*(set.*$//')
+    set _ruby_prompt (asdf current ruby &| sed 's/ruby[[:space:]]*//' | sed 's/[[:space:]].*//')
   end
 
   switch "$_ruby_prompt"
@@ -320,7 +320,7 @@ function prompt_python -d "Show python environment"
   else if test (command -v pyenv)
     set _python_prompt (pyenv version-name | sed 's/:.*$//' )
   else if test (command -v asdf)
-    set _python_prompt (asdf current python | sed 's/[[:space:]]*(set.*$//')
+    set _python_prompt (asdf current python &| sed 's/python[[:space:]]*//' | sed 's/[[:space:]].*//')
   end
 
   switch "$_python_prompt"
@@ -340,7 +340,7 @@ function prompt_nodejs -d "Show node.js environment"
   if test (command -v nvm)
     set _nodejs_prompt (nvm current ^ /dev/null);
   else if test (command -v asdf)
-    set _nodejs_prompt (asdf current nodejs | sed 's/\s*(set.*$//')
+    set _nodejs_prompt (asdf current nodejs &| sed 's/nodejs[[:space:]]*//' | sed 's/[[:space:]].*//')
   else if test (command -v node)
     set _nodejs_prompt (node --version ^ /dev/null | tail -n1)
   end
@@ -355,7 +355,7 @@ function prompt_go -d "Show go environment"
 
   set -l _go_prompt
   if test (command -v asdf)
-    set _go_prompt (asdf current golang | sed 's/[[:space:]]*(set.*$//')
+    set _go_prompt (asdf current golang &| sed 's/golang[[:space:]]*//' | sed 's/[[:space:]].*//')
   else if test (command -v go)
     and set _go_prompt (go version | grep --colour=never -oE '[[:digit:]].[[:digit:]]+')
   end
