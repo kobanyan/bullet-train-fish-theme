@@ -127,6 +127,14 @@ function setup_parameters -d "Set default value if parameter is not declared"
   set -q BULLETTRAIN_HG_DIRTY; or set -g BULLETTRAIN_HG_DIRTY ±
   set -q BULLETTRAIN_HG_NOT_ADDED_FG; or set -g BULLETTRAIN_HG_NOT_ADDED_FG green
   set -q BULLETTRAIN_HG_MODIFIED_FG; or set -g BULLETTRAIN_HG_MODIFIED_FG blue
+  # kubernetes context
+  set -q BULLETTRAIN_KCTX_SHOW; or set -g BULLETTRAIN_KCTX_SHOW true
+  set -q BULLETTRAIN_KCTX_BG; or set -g BULLETTRAIN_KCTX_BG yellow
+  set -q BULLETTRAIN_KCTX_FG; or set -g BULLETTRAIN_KCTX_FG white
+  set -q BULLETTRAIN_KCTX_PREFIX; or set -g BULLETTRAIN_KCTX_PREFIX ⎈
+  set -q BULLETTRAIN_KCTX_KCONFIG; or set -g BULLETTRAIN_KCTX_KCONFIG "$HOME/.kube/config"
+  set -q BULLETTRAIN_KCTX_KUBECTL; or set -g BULLETTRAIN_KCTX_KUBECTL true
+  set -q BULLETTRAIN_KCTX_NAMESPACE; or set -g BULLETTRAIN_KCTX_NAMESPACE true
   # time
   set -q BULLETTRAIN_EXEC_TIME_SHOW; or set -g BULLETTRAIN_EXEC_TIME_SHOW
   set -q BULLETTRAIN_EXEC_TIME_ELAPSED; or set -g BULLETTRAIN_EXEC_TIME_ELAPSED 5
@@ -145,6 +153,7 @@ function setup_parameters -d "Set default value if parameter is not declared"
     go \
     git \
     hg \
+    kctx \
     cmd_exec_time
   test "$BULLETTRAIN_PROMPT_ORDER"; or set -g BULLETTRAIN_PROMPT_ORDER $_prompt_order
 end
@@ -484,6 +493,24 @@ function prompt_hg -d "Show mercurial working tree info"
   test "$_dirty_fg";
     and set _fg $_dirty_fg;
       and prompt_segment $_bg $_fg $BULLETTRAIN_HG_DIRTY
+end
+
+function prompt_kctx -d "Show Kubernetes context"
+  test "$BULLETTRAIN_KCTX_SHOW" = "true"; or return
+  set -l _kctx_prompt
+
+  if test "$BULLETTRAIN_KCTX_KUBECTL" = "true"; and test (command -v kubectl)
+    set -l _jsonpath '{.current-context}'
+    test "$BULLETTRAIN_KCTX_NAMESPACE" = "true";
+      and set _jsonpath "$_jsonpath{':'}{..namespace}"
+    set _kctx_prompt (kubectl config view --minify --output "jsonpath=$_jsonpath" 2>/dev/null)
+  else if test -f $BULLETTRAIN_KCTX_KCONFIG
+    set _kctx_prompt (cat $BULLETTRAIN_KCTX_KCONFIG | grep current-context | awk '{print $2}')
+  end
+
+  test "$_kctx_prompt";
+    and set _kctx_prompt $BULLETTRAIN_KCTX_PREFIX $_kctx_prompt;
+      and prompt_segment $BULLETTRAIN_KCTX_BG $BULLETTRAIN_KCTX_FG "$_kctx_prompt"
 end
 
 function displaytime -a t
