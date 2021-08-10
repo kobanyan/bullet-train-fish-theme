@@ -289,7 +289,7 @@ function prompt_ruby -d "Show ruby environment"
   set -l _ruby_prompt
   if test (command -v rbenv)
     set -l _version (rbenv version | sed 's/ (set.*$//')
-    set -l _gemset (rbenv gemset active ^ /dev/null | sed 's/ global$//')
+    set -l _gemset (rbenv gemset active 2> /dev/null | sed 's/ global$//')
     test "$_gemset";
       and set _ruby_prompt $_version"@"$_gemset;
       or  set _ruby_prompt $_version
@@ -338,11 +338,11 @@ function prompt_nodejs -d "Show node.js environment"
 
   set -l _nodejs_prompt
   if test (command -v nvm)
-    set _nodejs_prompt (nvm current ^ /dev/null);
+    set _nodejs_prompt (nvm current 2> /dev/null);
   else if test (command -v asdf)
     set _nodejs_prompt (asdf current nodejs &| sed 's/nodejs[[:space:]]*//' | sed 's/[[:space:]].*//')
   else if test (command -v node)
-    set _nodejs_prompt (node --version ^ /dev/null | tail -n1)
+    set _nodejs_prompt (node --version 2> /dev/null | tail -n1)
   end
 
   test "$_nodejs_prompt";
@@ -368,7 +368,7 @@ end
 function prompt_git -d "Show git working tree info"
   test "$BULLETTRAIN_GIT_SHOW" = "true"; or return
   test (command -v git); or return
-  test (git rev-parse --is-inside-work-tree ^ /dev/null); or return
+  test (git rev-parse --is-inside-work-tree 2> /dev/null); or return
 
   set -l _bg $BULLETTRAIN_GIT_BG
   set -l _fg $BULLETTRAIN_GIT_FG
@@ -384,8 +384,8 @@ function prompt_git -d "Show git working tree info"
 end
 
 function git_prompt_info -a bg fg is_dirty
-  set -l ref (git symbolic-ref HEAD ^ /dev/null);
-    or set ref (git rev-parse --short HEAD ^ /dev/null);
+  set -l ref (git symbolic-ref HEAD 2> /dev/null);
+    or set ref (git rev-parse --short HEAD 2> /dev/null);
       or return 0
 
   set -l _dirty $BULLETTRAIN_GIT_CLEAN
@@ -403,13 +403,13 @@ function is_git_dirty
     set _flags $_flgs "--ignore-submodules=dirty"
   test "$BULLETTRAIN_GIT_DISABLE_UNTRACKED_FILES_DIRTY" = "true";
     set _flags $_flgs "--untracked-files=no"
-  set -l _status (git status "$_flgs" ^ /dev/null | tail -n1)
+  set -l _status (git status "$_flgs" 2> /dev/null | tail -n1)
   test "$_status"; and echo true
 end
 
 function git_compare_version -a version
   set -l _input_git_version (string split "." $version)
-  set -l _installed_git_version (string split "." (git --version ^ /dev/null | cut -d' ' -f3))
+  set -l _installed_git_version (string split "." (git --version 2> /dev/null | cut -d' ' -f3))
   for i in (seq 3)
     test $_installed_git_version[$i] -gt $_input_git_version[$i];
       and echo 1;
@@ -422,7 +422,7 @@ function git_compare_version -a version
 end
 
 function git_prompt_status -a bg fg
-  git status --porcelain -b ^ /dev/null | read -lz _index
+  git status --porcelain -b 2> /dev/null | read -lz _index
   test (find_from_lines '^## [^ ]\+ .*diverged' $_index);
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_DIVERGED_FG $BULLETTRAIN_GIT_DIVERGED
   test (find_from_lines '^## [^ ]\+ .*behind' $_index);
@@ -431,7 +431,7 @@ function git_prompt_status -a bg fg
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_AHEAD_FG $BULLETTRAIN_GIT_AHEAD
   test (find_from_lines '^UU ' $_index);
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_UNMERGED_FG $BULLETTRAIN_GIT_UNMERGED
-  test (git rev-parse --verify refs/stash ^ /dev/null);
+  test (git rev-parse --verify refs/stash 2> /dev/null);
     and git_prompt_segment $bg $fg $BULLETTRAIN_GIT_STASHED_FG $BULLETTRAIN_GIT_STASHED
   if begin test (find_from_lines '^ D ' $_index);
     or test (find_from_lines '^D  ' $_index);
@@ -468,7 +468,7 @@ function prompt_hg -d "Show mercurial working tree info"
   test "$BULLETTRAIN_HG_SHOW" = "true"; or return
   test (command -v hg); or return
 
-  set -l _hg_id (hg id -nb ^ /dev/null)
+  set -l _hg_id (hg id -nb 2> /dev/null)
   test "$_hg_id"; or return
 
   set -l _rev (echo $_hg_id | cut -d' ' -f1 | sed 's/[^-0-9]//g')
