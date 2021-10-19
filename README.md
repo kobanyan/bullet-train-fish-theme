@@ -37,7 +37,7 @@ In order to use the theme, you will first need:
 omf install https://github.com/kobanyan/bullet-train-fish-theme
 ```
 
-### For fisherman users
+### For fisher users
 
 ```bash
 fisher kobanyan/bullet-train-fish-theme
