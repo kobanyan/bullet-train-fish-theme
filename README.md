@@ -1,3 +1,5 @@
+> This project is _**deprecated**_. Please use [tide](https://github.com/IlanCosman/tide). tide is compatible with this theme and has more awesome features!
+
 # Bullet Train for fish
 
 Bullet Train **for fish** is reimplementaion of
